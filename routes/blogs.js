@@ -56,4 +56,23 @@ router.get("/all", function (req, res, next) {
   res.json(sampleBlogs);
 });
 
+router.get("/single/:blogTitleToGet", function (req, res, next) {
+  const blogTitleToGet = req.params.blogTitleToGet;
+  const blogToGet = sampleBlogs.find((blog) => blog.title === blogTitleToGet);
+  res.json(blogToGet);
+});
 module.exports = router;
+
+router.delete("/delete/:blogTitleToDelete", function (req, res, next) {
+  const blogTitleToDelete = req.params.blogTitleToDelete;
+  const blogToDelete = sampleBlogs.find(
+    (blog) => blog.title === blogTitleToDelete
+  );
+  const indexToDelete = sampleBlogs.indexOf(blogToDelete);
+  sampleBlogs.splice(indexToDelete, 1);
+  res.json({
+    success: true,
+    route: "blogs",
+    message: "Blog deleted",
+  });
+});
