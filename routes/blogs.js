@@ -44,35 +44,74 @@ const sampleBlogs = [
   },
 ];
 
+/* GET blogs default */
 router.get("/", function (req, res, next) {
   res.json({
     success: true,
     route: "blogs",
-    message: "default route for blogs",
+    message: "hello from the blogs default route",
   });
 });
 
 router.get("/all", function (req, res, next) {
-  res.json(sampleBlogs);
+  res.json({
+    success: true,
+    blogs: sampleBlogs,
+  });
 });
 
 router.get("/single/:blogTitleToGet", function (req, res, next) {
-  const blogTitleToGet = req.params.blogTitleToGet;
-  const blogToGet = sampleBlogs.find((blog) => blog.title === blogTitleToGet);
-  res.json(blogToGet);
-});
-module.exports = router;
+  const blogToFind = req.params.blogTitleToGet;
 
-router.delete("/delete/:blogTitleToDelete", function (req, res, next) {
-  const blogTitleToDelete = req.params.blogTitleToDelete;
-  const blogToDelete = sampleBlogs.find(
-    (blog) => blog.title === blogTitleToDelete
-  );
-  const indexToDelete = sampleBlogs.indexOf(blogToDelete);
-  sampleBlogs.splice(indexToDelete, 1);
+  /* const blogIndex = sampleBlogs.findIndex((blog)=>{
+		if (blog.title === blogToFind) {
+			return true;
+		} else {
+			return false;
+		}
+	})
+
+	const foundBlog = sampleBlogs[blogIndex]; */
+
+  // .find() will return the entry matching the true condition in the callback function
+  const foundBlog = sampleBlogs.find((blog) => {
+    if (blog.title === blogToFind) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
   res.json({
     success: true,
-    route: "blogs",
-    message: "Blog deleted",
+    blog: foundBlog,
   });
 });
+
+router.delete("/single/:blogTitleToDelete", (req, res) => {
+  const blogIndexToDelete = sampleBlogs.findIndex((blog) => {
+    if (blog.title === req.params.blogTitleToDelete) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  console.log(blogIndexToDelete);
+
+  if (blogIndexToDelete < 0) {
+    res.json({
+      hasBeenDeleted: false,
+    });
+    return;
+  }
+
+  sampleBlogs.splice(blogIndexToDelete, 1);
+
+  res.json({
+    hasBeenDeleted: true,
+  });
+});
+
+// Module.exports is listing the variables in this file to send to other files
+module.exports = router;
